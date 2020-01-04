@@ -40,7 +40,7 @@
 
 为了解决以上的问题，开发了本微服务。本系列服务的调用模式如下图：
 
-![img](D:\JIMU\JIMU\LogService\LogReciver\clip_image002.jpg)
+![img](clip_image002.jpg)
 
 **调用过程：**
 
