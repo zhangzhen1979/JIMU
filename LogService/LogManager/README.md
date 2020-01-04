@@ -1,6 +1,6 @@
  
 
-**LogReceiver  日志接收服务  V1.0.0  说明** 
+**LogReceiver  日志管理服务  V1.0.0  说明** 
 
 
 
@@ -71,24 +71,26 @@
 
 工程通过Eclipse的”Maven Install“功能，会在Target目录中生成jar包。
 
-将生成的“LogReciver-1.0.0.jar”文件与工程根目录的两个properties文件放在同一个文件夹中，即可启动此微服务。
+将生成的“LogManager-1.0.0.jar”文件与工程根目录的两个properties文件放在同一个文件夹中，即可启动此微服务。
 
 完整的部署文件夹应该包含以下文件：
 
-- LogReciver-1.0.0.jar：微服务文件，可执行。
+- LogManager-1.0.0.jar：微服务文件，可执行。
 
 - application.properties：微服务配置文件,可根据实际需求修改。各配置项说明如下（其他配置不建议修改）：
-  - server.port=8888：本微服务端口。
+  - server.port=8899：本微服务端口。
   - spring.kafka.producer.bootstrap-servers=127.0.0.1:9092：kafka服务的地址和端口
-  - spring.dubbo.registry.address=N/A：dubbo注册中心地址。如果配置成“N/A”，则为“不注册模式”（单机模式）；正常应配置为如下格式内容zookeeper://ip:2181
+  - spring.data.mongodb.uri=mongodb://127.0.0.1:27017/logdata：MongoDB的连接字符串。目前的连接方式是无密码；如果MongoDB是有用户名和密码的，此参数应该按照如下格式配置：mongodb://username:password@127.0.0.1:27017/logdata
+- spring.dubbo.registry.address=N/A：dubbo注册中心地址。如果配置成“N/A”，则为“不注册模式”（单机模式）；正常应配置为如下格式内容zookeeper://ip:2181
+  
 
 - dubbo.properties：dubbo连接数配置文件
 
 - startup.bat：Windows版启动脚本。内容如下：
-  - java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar
+  - java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar
 
 - startup.sh：Linux版启动脚本。内容如下：
-  - nohup  java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar  2>&1 &
+  - nohup  java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar  2>&1 &
 
 
 
@@ -100,7 +102,7 @@
 
 或可以在命令行窗口执行：
 
-java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar
+java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar
 
 其中Xms是设置最小内存；Xmx是设置最大内存。可以根据实际情况修改内存大小。
 
@@ -112,72 +114,122 @@ java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar
 
 ## REST接口
 
-### 接收日志
+### 查询日志信息列表
 
-接口地址：http://127.0.0.1:8888/api/setLog
+接口地址：http://127.0.0.1:8899/api/listLog
 
 输入参数：
 
 {
 
-​    "logID":"20191216-1704",
+​    "pageNum": "1",
 
-​    "logType":"sys",
+​    "logID": "3abad323dfad32",
 
-​    "appID":"test01",
+​    "logType": "sys",
 
-​    "appAddress":"http://127.0.0.1/demo",
+​    "appID": "testAppServer001",
 
-​    "operationTime":"2019-12-16 17:05:00",
+​    "appAddress": "http://abc.def.com/api/test",
 
-​    "logData":{
+​    "startTime": "2019-12-26 08:30:00",
 
-​         "creator":"wld",
-
-​         "pcurl":"/showtask.aspx?id=A00000000007"
-
-​    }
+​    "endTime": "2019-12-26 17:30:00"
 
 }
 
  
 
+说明：（以下查询参数，输入一个值即可；不输入值，则查询全部数据）
+
+- pageNum：页码。
+- logID：日志ID，可供返回给前端，供精确查询用。
+- logType：日志类型。
+- appID：服务的ID，用以区分服务或应用
+- appAddress：服务地址
+- startTime：查询记录的时间范围-开始时间。
+- endTime：查询记录的时间范围-结束时间。
+
+ 
+
+### 根据LogID获取日志详细信息
+
+接口地址：http://127.0.0.1:8899/api/getLog
+
+输入参数：
+
+{
+
+​    "logID": "20191216-1704",
+
+​    "logType": "sys"
+
+}
+
 说明：
 
 - logID：日志ID，可供返回给前端，供精确查询用。
+- logType：日志类型。
 
-- logType：日志类型。系统根据传入的类型，创建对应名称的Table。
-
-- appID：服务的ID，用以区分服务或应用
-
-- appAddress：服务地址
-
-- operationTime：日志的时间。
-
-- logData：其他自定义的日志信息，需要是Json格式。
-
-
-
+ 
 
 ## Dubbo接口
 
 @Service(version = "1.0.0") 
 
-### 接收日志
+### 查询日志信息列表
 
 接口方法：
 
    /**
 
-   \* 记录错误日志
+   \* 根据条件，查询日志
 
-   \* **@param** joLog 日志信息，以JSONObject形式传送
+   \* **@param** pageNum 页码
+
+   \* **@param** logID 日志id
+
+   \* **@param** logType 日志类型（sys/ope）
+
+   \* **@param** appID 应用服务id
+
+   \* **@param** appAddress 应用服务地址
+
+   \* **@param** startTime 开始时间
+
+   \* **@param** endTime 结束时间
+
+   \* **@return** 结果Map对象
+
+   */
+
+  **public** Map<Object, Object> listLogs(String pageNum, 
+
+​     String logID, String logType,
+
+​     String appID, String appAddress,
+
+​     String startTime, String endTime);
+
+ 
+
+### 根据LogID获取日志详细信息
+
+接口方法：
+
+   /**
+
+   \* 根据数据的id查询MongoDB中存储的对象
+
+   \* **@param** id 数据id
+
+   \* **@param** logType 日志类型 sys/ope
 
    \* **@return**
 
    */
 
-  **public** **boolean** sendLog(JSONObject joLog);
+  **public** LogObject findById(String id, String logType);
 
  
 
