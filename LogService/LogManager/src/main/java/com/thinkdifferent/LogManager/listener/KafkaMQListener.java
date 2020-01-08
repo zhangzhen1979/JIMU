@@ -42,9 +42,15 @@ public class KafkaMQListener {
     			
                 BasicDBObject obj = BasicDBObject.parse(joLog.toString());
                 coll.insert(obj);
+                
+                obj.clear();
+                obj=null;
     		}else{
                 logger.error("接收到的日志消息格式错误：", strMessage);
     		}
+
+    		joLog.clear();
+    		joLog=null;
 
         } catch (Exception e) {
             e.printStackTrace();
