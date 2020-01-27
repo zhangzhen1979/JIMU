@@ -67,12 +67,12 @@
 - application.properties：微服务配置文件,可根据实际需求修改。各配置项说明如下（其他配置不建议修改）：
   
   - server.port=8888：本微服务端口。
-    
+  
 - spring.kafka.producer.bootstrap-servers=127.0.0.1:9092：kafka服务的地址和端口
-    
+  
   - spring.data.mongodb.uri=mongodb://127.0.0.1:27017/logdata：MongoDB的连接字符串。目前的连接方式是无密码；如果MongoDB是有用户名和密码的，此参数应该按照如下格式配置：
     
-    ​		mongodb://username:password@127.0.0.1:27017/logdata
+    ​		`mongodb://username:password@127.0.0.1:27017/logdata`
     
   - spring.dubbo.registry.address=N/A：dubbo注册中心地址。如果配置成“N/A”，则为“不注册模式”（单机模式）；正常应配置为如下格式内容zookeeper://ip:2181
   
@@ -80,11 +80,11 @@
 
 - startup.bat：Windows版启动脚本。内容如下：
   
-- java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar
+   `java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar`
   
 - startup.sh：Linux版启动脚本。内容如下：
   
-  - nohup  java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar  2>&1 &
+  `nohup  java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar  2>&1 &`
 
 
 
@@ -96,7 +96,7 @@
 
 或可以在命令行窗口执行：
 
-java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar
+`java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar`
 
 其中Xms是设置最小内存；Xmx是设置最大内存。可以根据实际情况修改内存大小。
 
@@ -116,25 +116,15 @@ java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar
 
 ```json
 {
-
     "table": "union_todo_list",
-
     "query": [{
-
          "field": "dataID",
-
          "condition": "=",
-
          "value": "202001262054"
-
     }],
-
     "pageNum": 1,
-
     "orderField": "dataID",
-
     "orderType": "asc"
-
 }
 ```
 
@@ -234,117 +224,91 @@ java -jar -Xms1g -Xmx1g ./MongoManager-1.0.0.jar
 
 ## Dubbo接口
 
+```java
 @Service(version = "1.0.0") 
-
 com.thinkdifferent.MongoDBManager.dubbo.service.MongoDBService
+```
 
 
 
 ### 查询数据列表
 
+```java
  /**
-
-   \* 根据条件，查询数据
-
-   \* 
-
-   \* **@param** strTableName 表名
-
-   \* **@param** jaSearchData JSON格式的查询条件
-
-   \* **@param** intPageNum 页码
-
-   \* **@param** strOrderField 排序字段名
-
-   \* **@param** strOrderType 排序类型：asc 升序；desc 降序
-
-   \* **@return** 结果Map对象
-
+   * 根据条件，查询数据
+   * 
+   * @param strTableName 表名
+   * @param jaSearchData JSON格式的查询条件
+   * @param intPageNum 页码
+   * @param strOrderField 排序字段名
+   * @param strOrderType 排序类型：asc 升序；desc 降序
+   * @return 结果Map对象
    */
-
-  **public** Map<Object, Object> listDatas(String strTableName, 
-
-​     JSONArray jaSearchData, **int** intPageNum,
-
-​     String strOrderField, String strOrderType);
+  public Map<Object, Object> listDatas(String strTableName, 
+     JSONArray jaSearchData, int intPageNum,
+     String strOrderField, String strOrderType);
+```
 
  
 
 ### 根据ID获取详细信息
 
+```java
   /**
-
-   \* 根据数据的id查询MongoDB中存储的对象
-
-   \* 
-
-   \* **@param** strTableName 表名
-
-   \* **@param** dataID 数据id
-
-   \* **@return** JSONObject
-
+   * 根据数据的id查询MongoDB中存储的对象
+   * 
+   * @param strTableName 表名
+   * @param dataID 数据id
+   * @return JSONObject
    */
-
-  **public** JSONObject findByDataId(String strTableName, String dataID);
+  public JSONObject findByDataId(String strTableName, String dataID);
+```
 
  
 
 ### 插入数据
 
+```java
   /**
-
-   \* 将传入的JSONObject对象，存入到指定的集合（表）中
-
-   \* 
-
-   \* **@param** strTableName 表名
-
-   \* **@param** data 需要存入的JSON数据
-
-   \* **@return** 保存后的JSON数据对象
-
+   * 将传入的JSONObject对象，存入到指定的集合（表）中
+   * 
+   * @param strTableName 表名
+   * @param data 需要存入的JSON数据
+   * @return 保存后的JSON数据对象
    */
-
-  **public** JSONObject insertData(String strTableName, JSONObject data);
+  public JSONObject insertData(String strTableName, JSONObject data);
+```
 
  
 
 ### 更新数据
 
+```java
   /**
-
-   \* 根据查询条件，更新符合条件的任意多条数据。
-
-   \* 
-
-   \* **@param** strTableName 表名
-
-   \* **@param** jaSearchData 查询对象，JSONArray格式
-
-   \* **@param** joUpdateData 更新内容对象，JSON格式
-
+   * 根据查询条件，更新符合条件的任意多条数据。
+   * 
+   * @param strTableName 表名
+   * @param jaSearchData 查询对象，JSONArray格式
+   * @param joUpdateData 更新内容对象，JSON格式
    */
 
-  **public** **void** updateData(String strTableName, JSONArray jaSearchData, JSONObject joUpdateData);
+  public void updateData(String strTableName, JSONArray jaSearchData, JSONObject joUpdateData);
+```
 
  
 
 ### 删除数据
 
+```java
   /**
-
-   \* 删除指定集合（表）中指定条件的数据
-
-   \* 
-
-   \* **@param** strTableName 表名
-
-   \* **@param** jaSearchData 删除时的查询条件
-
+   * 删除指定集合（表）中指定条件的数据
+   * 
+   * @param strTableName 表名
+   * @param jaSearchData 删除时的查询条件
    */
 
-  **public** **void** deleteData(String strTableName, JSONArray jaSearchData);
+  public void deleteData(String strTableName, JSONArray jaSearchData);
+```
 
  
 

@@ -83,14 +83,15 @@
   - spring.data.mongodb.uri=mongodb://127.0.0.1:27017/logdata：MongoDB的连接字符串。目前的连接方式是无密码；如果MongoDB是有用户名和密码的，此参数应该按照如下格式配置：mongodb://username:password@127.0.0.1:27017/logdata
 - spring.dubbo.registry.address=N/A：dubbo注册中心地址。如果配置成“N/A”，则为“不注册模式”（单机模式）；正常应配置为如下格式内容zookeeper://ip:2181
   
-
 - dubbo.properties：dubbo连接数配置文件
 
 - startup.bat：Windows版启动脚本。内容如下：
-  - java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar
-
+  
+`java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar`
+  
 - startup.sh：Linux版启动脚本。内容如下：
-  - nohup  java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar  2>&1 &
+  
+  `nohup  java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar  2>&1 &`
 
 
 
@@ -102,7 +103,7 @@
 
 或可以在命令行窗口执行：
 
-java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar
+`java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar`
 
 其中Xms是设置最小内存；Xmx是设置最大内存。可以根据实际情况修改内存大小。
 
@@ -120,23 +121,17 @@ java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar
 
 输入参数：
 
+```json
 {
-
-​    "pageNum": "1",
-
-​    "logID": "3abad323dfad32",
-
-​    "logType": "sys",
-
-​    "appID": "testAppServer001",
-
-​    "appAddress": "http://abc.def.com/api/test",
-
-​    "startTime": "2019-12-26 08:30:00",
-
-​    "endTime": "2019-12-26 17:30:00"
-
+    "pageNum": "1",
+    "logID": "3abad323dfad32",
+    "logType": "sys",
+    "appID": "testAppServer001",
+    "appAddress": "http://abc.def.com/api/test",
+    "startTime": "2019-12-26 08:30:00",
+    "endTime": "2019-12-26 17:30:00"
 }
+```
 
  
 
@@ -158,13 +153,12 @@ java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar
 
 输入参数：
 
+```json
 {
-
-​    "logID": "20191216-1704",
-
-​    "logType": "sys"
-
+    "logID": "20191216-1704",
+    "logType": "sys"
 }
+```
 
 说明：
 
@@ -175,62 +169,48 @@ java -jar -Xms1g -Xmx1g ./LogManager-1.0.0.jar
 
 ## Dubbo接口
 
+```java
 @Service(version = "1.0.0") 
+
+
+```
+
+
 
 ### 查询日志信息列表
 
-接口方法：
-
-   /**
-
-   \* 根据条件，查询日志
-
-   \* **@param** pageNum 页码
-
-   \* **@param** logID 日志id
-
-   \* **@param** logType 日志类型（sys/ope）
-
-   \* **@param** appID 应用服务id
-
-   \* **@param** appAddress 应用服务地址
-
-   \* **@param** startTime 开始时间
-
-   \* **@param** endTime 结束时间
-
-   \* **@return** 结果Map对象
-
+```java
+  /**
+   * 根据条件，查询日志
+   *
+   * @param pageNum 页码
+   * @param logID 日志id
+   * @param logType 日志类型（sys/ope）
+   * @param appID 应用服务id
+   * @param appAddress 应用服务地址
+   * @param startTime 开始时间
+   * @param endTime 结束时间
+   * @return 结果Map对象
    */
-
-  **public** Map<Object, Object> listLogs(String pageNum, 
-
-​     String logID, String logType,
-
-​     String appID, String appAddress,
-
-​     String startTime, String endTime);
+  public Map<Object, Object> listLogs(String pageNum, 
+     String logID, String logType,
+     String appID, String appAddress,
+     String startTime, String endTime);
+```
 
  
 
 ### 根据LogID获取日志详细信息
 
-接口方法：
-
-   /**
-
-   \* 根据数据的id查询MongoDB中存储的对象
-
-   \* **@param** id 数据id
-
-   \* **@param** logType 日志类型 sys/ope
-
-   \* **@return**
-
+```java
+  /**
+   * 根据数据的id查询MongoDB中存储的对象
+   *
+   * @param id 数据id
+   * @param logType 日志类型 sys/ope
+   * @return
    */
+  public LogObject findById(String id, String logType);
+```
 
-  **public** LogObject findById(String id, String logType);
 
- 
-
- 

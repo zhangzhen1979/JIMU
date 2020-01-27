@@ -85,10 +85,12 @@
 - dubbo.properties：dubbo连接数配置文件
 
 - startup.bat：Windows版启动脚本。内容如下：
-  - java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar
-
+  
+`java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar`
+  
 - startup.sh：Linux版启动脚本。内容如下：
-  - nohup  java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar  2>&1 &
+  
+  `nohup  java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar  2>&1 &`
 
 
 
@@ -100,7 +102,7 @@
 
 或可以在命令行窗口执行：
 
-java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar
+`java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar`
 
 其中Xms是设置最小内存；Xmx是设置最大内存。可以根据实际情况修改内存大小。
 
@@ -118,27 +120,19 @@ java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar
 
 输入参数：
 
+```json
 {
-
-​    "logID":"20191216-1704",
-
-​    "logType":"sys",
-
-​    "appID":"test01",
-
-​    "appAddress":"http://127.0.0.1/demo",
-
-​    "operationTime":"2019-12-16 17:05:00",
-
-​    "logData":{
-
-​         "creator":"wld",
-
-​         "pcurl":"/showtask.aspx?id=A00000000007"
-
-​    }
-
+    "logID":"20191216-1704",
+    "logType":"sys",
+    "appID":"test01",
+    "appAddress":"http://127.0.0.1/demo",
+    "operationTime":"2019-12-16 17:05:00",
+    "logData":{
+         "creator":"wld",
+         "pcurl":"/showtask.aspx?id=A00000000007"
+    }
 }
+```
 
  
 
@@ -161,24 +155,23 @@ java -jar -Xms1g -Xmx1g ./LogReciver-1.0.0.jar
 
 ## Dubbo接口
 
+```java
 @Service(version = "1.0.0") 
+
+```
+
+
 
 ### 接收日志
 
-接口方法：
-
+```java
    /**
-
-   \* 记录错误日志
-
-   \* **@param** joLog 日志信息，以JSONObject形式传送
-
-   \* **@return**
-
+   * 记录错误日志
+   *
+   * @param joLog 日志信息，以JSONObject形式传送
+   * @return
    */
-
-  **public** **boolean** sendLog(JSONObject joLog);
-
- 
+  public boolean sendLog(JSONObject joLog);
+```
 
  

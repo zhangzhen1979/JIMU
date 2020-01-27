@@ -71,10 +71,12 @@
 - dubbo.properties：dubbo连接数配置文件
 
 - startup.bat：Windows版启动脚本。内容如下：
-  - java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar
-
+  
+`java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar`
+  
 - startup.sh：Linux版启动脚本。内容如下：
-  - nohup  java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar  2>&1 &
+  
+  `nohup  java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar  2>&1 &`
 
 
 
@@ -86,7 +88,7 @@
 
 或可以在命令行窗口执行：
 
-java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar
+`java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar`
 
 其中Xms是设置最小内存；Xmx是设置最大内存。可以根据实际情况修改内存大小。
 
@@ -106,65 +108,48 @@ java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar
 
 插入数据：
 
+```json
 {
-
-​    "table": "union_todo_list",
-
-​    "operation": "insert",
-
-​    "dataID": "202001262139",
-
-​    "data": {
-
-​         "creator": "wld",
-
-​         "pcurl": "/showtask.aspx?id=A00000000007"
-
-​    }
-
+    "table": "union_todo_list",
+    "operation": "insert",
+    "dataID": "202001262139",
+    "data": {
+         "creator": "wld",
+         "pcurl": "/showtask.aspx?id=A00000000007"
+    }
 }
+```
 
  
 
 更新数据：（更新哪个字段，在data中写哪个字段和值。）
 
+```json
 {
-
-​    "table": "union_todo_list",
-
-​    "operation": "update",
-
-​    "query": [{
-
-​         "field": "dataID",
-
-​         "condition": "=",
-
-​         "value": "202001262054"
-
-​    }],
-
-​    "data": {
-
-​         "creator": "dadr23erwerwer"
-
-​    }
-
+    "table": "union_todo_list",
+    "operation": "update",
+    "query": [{
+         "field": "dataID",
+         "condition": "=",
+         "value": "202001262054"
+    }],
+    "data": {
+         "creator": "dadr23erwerwer"
+    }
 }
+```
 
  
 
 删除数据：
 
+```json
 {
-
-​    "table": "union_todo_list",
-
-​    "operation": "delete",
-
-​    "dataID": "202001262139"
-
+    "table": "union_todo_list",
+    "operation": "delete",
+    "dataID": "202001262139"
 }
+```
 
  
 
@@ -181,26 +166,23 @@ java -jar -Xms1g -Xmx1g ./MongoReciver-1.0.0.jar
 
 ## Dubbo接口
 
+```java
 @Service(version = "1.0.0") 
-
 com.thinkdifferent.MongoDBReciver.dubbo.service.MongoDBService
+```
 
 
 
 ### 发送数据
 
+```java
   /**
-
-   \* 发送数据
-
-   \* **@param** joData 数据信息，以JSONObject形式传送
-
-   \* **@return**
-
+   * 发送数据
+   * @param joData 数据信息，以JSONObject形式传送
+   * @return
    */
 
-  **public** **boolean** sendData(JSONObject joData);
-
- 
+  public boolean sendData(JSONObject joData);
+```
 
  
