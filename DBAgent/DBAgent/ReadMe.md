@@ -81,30 +81,18 @@ DBAgent采用SpringBoot架构，利用Dubbo框架完成服务注入的管理。D
 
 用druid获取数据库连接，之后使用jpa操作数据库，进行数据的增删查改，实现接口方法功能。
 
-代码部分完成后，需要配置配置文件，配置在spring boot 默认配置文件即可，具体内容如下：
+### DBAgent服务端配置
+
+代码部分完成后，需要配置配置文件，配置在spring boot 默认配置文件即可（本服务为application.yml)，具体内容如下：
 
 ```yaml
 server:
   port: 8080
 
-dubbo:
-  application:
-    # dubbo提供者的别名，只是个标识
-    name: dbagent
-  registry:
-#    address: zookeeper:////10.32.69.103:2181
-    address: N/A
-  #注册中心类型
-  protocol:
-    name: dubbo
-    port: 20881
-  scan:
-    base-packages: com.thinkdifferent.DBAgent.service
-
-# 以下为数据库连接配置
 spring:
+  # 以下为数据库连接配置
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/udmc?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1/udmc?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
     # url: jdbc:oracle:thin:@127.0.0.1:1521:demo
     username: root
     password: root
@@ -112,8 +100,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     # 连接池配置
     druid:
-      initial-size: 200 # 连接池初始化大小
-      min-idle: 50      # 连接池最小连接数
+      initial-size: 20 # 连接池初始化大小
+      min-idle: 5      # 连接池最小连接数
       max-active: 2500  # 连接池最大连接数
       max-wait: 60000   # 配置获取连接等待超时的时间
       time-between-eviction-runs-millis: 60000 # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -143,6 +131,20 @@ spring:
         url-pattern: /druid/*
       web-stat-filter:
         exclusions: \*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*
+
+# 以下为dubbo provider相关配置
+dubbo:
+  application:
+    name: dbagent # dubbo提供者的别名，只是个标识
+  registry:
+    # address: zookeeper://127.0.0.1:2181
+    address: N/A
+  #注册中心类型
+  protocol:
+    name: dubbo
+    port: 20880
+  scan:
+    base-packages: com.thinkdifferent.dbagent.service
 ```
 
  
@@ -370,6 +372,165 @@ spring:
 
 
 
+# 客户端调用示例
+
+REST层
+
+```java
+package com.thinkdifferent.DBAgentDemo.web;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.thinkdifferent.DBAgentDemo.service.DemoServiceImpl;
+
+import net.sf.json.JSONObject;
+
+/**
+ * SQL语句测试专用，REST接口
+ */
+@CrossOrigin
+@org.springframework.web.bind.annotation.RestController
+@RequestMapping("/demo")
+public class DemoREST {
+	private static final Logger log = LoggerFactory.getLogger(DemoREST.class);
+
+	@Autowired
+	private ApplicationContext applicationContext;
+
+	private DemoServiceImpl demoService;
+	
+	@RequestMapping(value="/test",method=RequestMethod.GET)
+	public Map<String,Object> test(){
+		// 返回参数
+		Map<String,Object> mapReturn=new HashMap<String,Object>();
+		mapReturn.put("flag","FAILED");
+		
+		try {
+			String strIP="127.0.0.1";
+			int intPort=20880;
+			String strVersion="1.0.0";
+			String strPackage="com.thinkdifferent.DBAgent.service.DBService";
+			demoService=new DemoServiceImpl(strIP, intPort, 
+					strVersion, strPackage,
+					applicationContext);
+			// 调用Service方法，，根据SQL在xml中配置的name，从配置文件中获取需要运行的SQL
+			JSONObject joResult=demoService.test();
+			
+			if(joResult.getBoolean("flag")){
+				mapReturn.put("flag","SUCCESS");
+				mapReturn.put("message","SQL执行成功");
+				mapReturn.put("data", joResult);
+			}else{
+				mapReturn.put("flag","FAILED");
+				mapReturn.put("message","SQL执行失败");
+			}
+				
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e.getMessage(), e);
+		}
+		return mapReturn;	
+	}
+}
+
+```
+
+
+
+Service层
+
+```java
+package com.thinkdifferent.DBAgentDemo.service;
+
+import org.springframework.context.ApplicationContext;
+import com.thinkdifferent.DBAgentDemo.dao.DemoDAO;
+import net.sf.json.JSONObject;
+
+/**
+ * SQL语句测试专用，Service层方法
+ */
+public class DemoServiceImpl {
+
+	private DemoDAO demoDAO;
+	
+	public DemoServiceImpl(String strIP, int intPort, 
+			String strVersion, String strPackage,
+			ApplicationContext applicationContext){
+		demoDAO=new DemoDAO(strIP, intPort, 
+				strVersion, strPackage,
+				applicationContext);
+	}
+
+	public JSONObject test() {
+		JSONObject joReturn=new JSONObject();
+		try{
+			boolean blnFlag=false;
+				blnFlag=demoDAO.test();
+				joReturn.put("flag", blnFlag);
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return joReturn;
+	}
+}
+```
+
+Dao层
+
+```java
+package com.thinkdifferent.DBAgentDemo.dao;
+
+import java.util.UUID;
+
+import org.springframework.context.ApplicationContext;
+
+import com.thinkdifferent.DBAgent.service.DBService;
+import com.thinkdifferent.DBAgent.util.DBAgentUtil;
+
+/**
+ * SQL语句测试专用，DAO层方法
+ */
+public class DemoDAO {
+
+	// 调用DBConnecter 查询接口
+	private DBService dbaService;
+	
+	public DemoDAO(String strIP, int intPort,
+			String strVersion, String strPackage,
+			ApplicationContext applicationContext) {
+		DBAgentUtil dbaUtil=new DBAgentUtil();
+		dbaService=dbaUtil.getService(strIP, intPort, strVersion, strPackage, applicationContext);
+	}
+	
+	public boolean test() {
+		try{
+			String strID=UUID.randomUUID().toString().replaceAll("-","");
+
+			String strSQL="insert into dat_son1_test (id, pid) values ('"+strID+"','456')";
+			
+	        return dbaService.insertBySQL(strSQL, null, "udmc");
+		}catch(Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	}
+}
+```
+
+
+
 # 运维信息
 
 ## Linux启动命令（示例）
@@ -388,3 +549,4 @@ Druid监控页面：访问http://127.0.0.1:8080/druid/login.html
 用户密码为数据库与用户密码
 
  
+
