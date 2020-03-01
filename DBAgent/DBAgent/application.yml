@@ -1,24 +1,13 @@
 server:
   port: 8080
 
-dubbo:
-  application:
-    # dubbo提供者的别名，只是个标识
-    name: dbagent
-  registry:
-#    address: zookeeper:////10.32.69.103:2181
-    address: N/A
-  #注册中心类型
-  protocol:
-    name: dubbo
-    port: 20881
-  scan:
-    base-packages: com.thinkdifferent.DBAgent.service
 
-# 以下为数据库连接配置
+
+
 spring:
+  # 以下为数据库连接配置
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/udmc?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://127.0.0.1/udmc?characterEncoding=utf8&useUnicode=true&useSSL=false&serverTimezone=UTC
     # url: jdbc:oracle:thin:@127.0.0.1:1521:demo
     username: root
     password: root
@@ -26,8 +15,8 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     # 连接池配置
     druid:
-      initial-size: 200 # 连接池初始化大小
-      min-idle: 50      # 连接池最小连接数
+      initial-size: 20 # 连接池初始化大小
+      min-idle: 5      # 连接池最小连接数
       max-active: 2500  # 连接池最大连接数
       max-wait: 60000   # 配置获取连接等待超时的时间
       time-between-eviction-runs-millis: 60000 # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
@@ -57,3 +46,17 @@ spring:
         url-pattern: /druid/*
       web-stat-filter:
         exclusions: \*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*
+
+# 以下为dubbo provider相关配置
+dubbo:
+  application:
+    name: dbagent # dubbo提供者的别名，只是个标识
+  registry:
+    # address: zookeeper://127.0.0.1:2181
+    address: N/A
+  #注册中心类型
+  protocol:
+    name: dubbo
+    port: 20880
+  scan:
+    base-packages: com.thinkdifferent.dbagent.service

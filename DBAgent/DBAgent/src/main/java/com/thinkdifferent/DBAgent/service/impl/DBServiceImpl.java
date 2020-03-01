@@ -1,6 +1,5 @@
 package com.thinkdifferent.DBAgent.service.impl;
 
-import com.alibaba.dubbo.config.annotation.Service;
 import com.foundationdb.sql.StandardException;
 import com.foundationdb.sql.parser.SQLParser;
 import com.foundationdb.sql.parser.StatementNode;
@@ -18,6 +17,7 @@ import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.dubbo.config.annotation.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service(version = "1.0.0", timeout = 10000, interfaceName = "com.thinkdifferent.DBAgent.service.DBService")
+@Service(version = "1.0.0", timeout = 10000, interfaceName = "com.thinkdifferent.dbagent.service.DBService")
 public class DBServiceImpl implements DBService {
     private final static Logger LOGGER = LoggerFactory.getLogger(DBServiceImpl.class);
 

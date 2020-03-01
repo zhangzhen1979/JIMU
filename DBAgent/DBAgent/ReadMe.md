@@ -363,11 +363,28 @@ spring:
 
 如果执行后返回执行失败，则抛出异常，终止执行，回滚SQL操作。
 
-## 上线运行前置条件
+# 上线运行前置条件
 
 - 每个DBAgent只能连接一个数据库。
 - 数据库连接必须通过application.yml文件配置，与jar包同级。
 
 
+
+# 运维信息
+
+## Linux启动命令（示例）
+
+nohup java  -Ddubbo.properties.file=file:///u01/application/dbconnecter-3/dubbo.properties -jar -server target/cloudcc-dbconnecter-1.0.0.jar --spring.config.location=file:///u01/application/dbconnecter/cloudcc-dbconnecter.properties &
+
+## 启动JMX监控（示例）
+
+nohup java -Djava.rmi.server.hostname=本机IP  -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=1099 -Dcom.sun.management.jmxremote.authenticate=false  -Dcom.sun.management.jmxremote.ssl=false -Ddubbo.properties.file=file:///u01/application/dbconnecter-3/dubbo.properties -jar -server target/cloudcc-dbconnecter-1.0.0.jar --spring.config.location=file:///u01/application/dbconnecter-3/cloudcc-dbconnecter.properties &
+
+
+
+## Druid Monitor监控界面
+
+Druid监控页面：访问http://127.0.0.1:8080/druid/login.html
+用户密码为数据库与用户密码
 
  
