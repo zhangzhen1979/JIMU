@@ -21,7 +21,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<dubbo-spring-boot-starter.version>2.7.5</dubbo-spring-boot-starter.version>
-		<org.apache.dubbo>2.7.5</org.apache.dubbo>
+		<org.apache.dubbo>2.7.13</org.apache.dubbo>
 	</properties>
 
 	<dependencies>
