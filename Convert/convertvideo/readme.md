@@ -9,6 +9,9 @@
 本服务依赖于FFmpeg，需要先行在系统中安装此应用。
 
 FFmpeg的官方网址：[GitHub - FFmpeg/FFmpeg: Mirror of https://git.ffmpeg.org/ffmpeg.git](https://github.com/FFmpeg/FFmpeg)
+FFMpeg下载地址：
+1：https://github.com/BtbN/FFmpeg-Builds/releases
+2：https://www.gyan.dev/ffmpeg/builds/
 
 # 配置说明
 
