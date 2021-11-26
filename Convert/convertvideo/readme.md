@@ -8,7 +8,7 @@
 
 本服务依赖于FFmpeg，需要先行在系统中安装此应用。
 
-FFmpeg的官方网址：[GitHub - FFmpeg/FFmpeg: Mirror of https://git.ffmpeg.org/ffmpeg.git](https://github.com/FFmpeg/FFmpeg)
+FFmpeg的官方网址：http://www.ffmpeg.org/
 
 FFMpeg下载地址：
 
