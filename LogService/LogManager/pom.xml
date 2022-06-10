@@ -19,7 +19,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<com.alibaba.dubbo.version>2.6.0</com.alibaba.dubbo.version>
+		<com.alibaba.dubbo.version>2.6.12</com.alibaba.dubbo.version>
 		<org.apache.zookeeper.version>3.4.14</org.apache.zookeeper.version>
 		<com.github.sgroschupf.zkclient.version>0.1</com.github.sgroschupf.zkclient.version>
 	</properties>
